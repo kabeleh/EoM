@@ -7,12 +7,14 @@ All definitions are self-contained in each notebook, i.e. the notebook should ru
 
 A big thanks to the xAct user group https://groups.google.com/g/xact and its committed members.
 
-# xTras
+## xTras
 The EoM_xTras.nb directly derives the equations of motion in a metric-dependent way.
 
-# xCoba
+## xCoba
 The EoM_xCoba.nb derives abstract equation of motion using xPert and re-expresses these expressions then by the means of xCoba in a metric-dependent way.
 
-# xPand
+## xPand
 The EoM_xPand.nb starts with the equations of motion in abstract notation (derived using xPert) and re-expressed them in a metric-dependent way.
 
+# CLASS
+The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers.
