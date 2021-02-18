@@ -2,9 +2,13 @@
 This repository contains the files that I used for my master thesis on quintessence. It is for your convenience if you'd like to reproduce my results and it serves as a backup for myself and future reference. I'd like to thank the creators and maintainers of the following projects:
 
 xAct: http://xact.es
+
 xPand: http://www2.iap.fr/users/pitrou/xpand.htm
+
 CLASS: https://lesgourg.github.io/class_public/class.html
+
 MontePython: https://brinckmann.github.io/montepython_public/
+
 
 # Equations of Motion
 Equations of Motion from a Lagrangian
