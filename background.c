@@ -2134,7 +2134,10 @@ int background_initial_conditions(
   if(pba->has_scf == _TRUE_){
     //scf_lambda = pba->scf_parameters[0];//KBL
     if(pba->attractor_ic_scf == _TRUE_){
-      /**pvecback_integration[pba->index_bi_phi_scf] = -1/scf_lambda*
+
+      //KBL: comment this out
+      /**
+      pvecback_integration[pba->index_bi_phi_scf] = -1/scf_lambda*
         log(rho_rad*4./(3*pow(scf_lambda,2)-12))*pba->phi_ini_scf;
       if (3.*pow(scf_lambda,2)-12. < 0){
         // - --> If there is no attractor solution for scf_lambda, assign some value. Otherwise would give a nan./
@@ -2144,7 +2147,9 @@ int background_initial_conditions(
       }
       pvecback_integration[pba->index_bi_phi_prime_scf] = 2*pvecback_integration[pba->index_bi_a]*
         sqrt(V_scf(pba,pvecback_integration[pba->index_bi_phi_scf]))*pba->phi_prime_ini_scf;
-    }*/
+    }
+    */
+    //KBL: till here
       // HVR ->      
       // scf params:
       scf_b = pba->scf_parameters[1];
@@ -2154,10 +2159,28 @@ int background_initial_conditions(
       //~ printf("  * HVR: Scalar field params:\nb=%g\nc=%g\nphi0=%g\nC=%g\n\n",scf_b,scf_c,scf_phi0,scf_C);
       
       //printf("  * HVR: Using (new) attractor initial conditions ");
+
+      //KBL: Comment this out
+      /**
       pvecback_integration[pba->index_bi_phi_prime_scf] = 2*a/sqrt(3);
       pvecback_integration[pba->index_bi_phi_scf] = scf_phi0 - 1./scf_b*(scf_c*scf_phi0 - 4*log(a) - log(scf_C)\
                                                                          + log(4.*Omega_rad*pba->H0*pba->H0/scf_b/scf_b - 2./3.*a*a*a*a));
-             
+      */
+      //KBL: Till here   
+
+
+
+      //KBL:1
+      // We used w_b = w_rad = 1/3 for the background equation of state
+      // and the tracking condition from the Agrawal 2019 paper (eq. (3))
+      double rho_track = 3.0*rho_rad/pow(scf_b,2)*pow(1.0+1.0/3.0,2);
+      pvecback_integration[pba->index_bi_phi_prime_scf] = a*sqrt(rho_track*(1.0+1.0/3.0));
+      pvecback_integration[pba->index_bi_phi_scf] = -1.0/scf_b*log(1.0/(2.0*scf_C*exp(-scf_phi0*(scf_c-scf_b)))*rho_track*(1.0-1.0/3.0));
+      //KBL:0  
+
+
+
+
       //printf("(phi=%g, phi_prime=%g, phi_0=%g)\n", pvecback_integration[pba->index_bi_phi_scf],\
                                                  pvecback_integration[pba->index_bi_phi_prime_scf],\
                                                  scf_phi0);
@@ -2528,7 +2551,7 @@ int background_derivs(
       dy[pba->index_bi_phi_prime_scf] = - y[pba->index_bi_a]*
           (2*pvecback[pba->index_bg_H]*y[pba->index_bi_phi_prime_scf]
           + y[pba->index_bi_a]*dV_scf(pba,y[pba->index_bi_phi_scf])) 
-          - 2*pow(y[pba->index_bi_a],2)*(y[pba->index_bi_phi_scf]-pba->scf_parameters[3])*pvecback[pba->index_bg_rho_cdm]/
+          + 2*pow(y[pba->index_bi_a],2)*pba->scf_parameters[5]*pvecback[pba->index_bg_rho_cdm]/
           (1 + exp(-2*pba->scf_parameters[5]*(y[pba->index_bi_phi_scf]-pba->scf_parameters[3])));//pba->scf_parameters[5] points to gamma, pba->scf_parameters[3] points to phi_0
           //printf("1");
     }
