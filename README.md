@@ -11,22 +11,19 @@ MontePython: https://brinckmann.github.io/montepython_public/
 
 
 # Equations of Motion
-Equations of Motion from a Lagrangian
+Equations of Motion from a Lagrangian / an action
 
-This rep contains mathematica files that use the xAct package and different approaches to derive the equations of motion from a specified Lagrangian in a flat Friedmann-Lemaître-Robertson-Walker universe with a first order perturbation in a scalar-vector-tensor decomposition.
+This rep contains mathematica files that use the xAct packages xPert and xPand to derive the equations of motion from a specified Lagrangian in a flat Friedmann-Lemaître-Robertson-Walker (FLRW) universe with a first order perturbation in a scalar-vector-tensor (SVT) decomposition.
 
-All definitions are self-contained in each notebook, i.e. the notebook should run stand-alone. However, xPand starts with the abstract expressions derived using xPert that are included in the EoM_xCoba.nb.
+All definitions are self-contained in each notebook, i.e. the notebook should run stand-alone. However, xPand starts with the abstract expressions derived using xPert that are included in the xPert.nb.
 
 A big thanks to the xAct user group https://groups.google.com/g/xact and its committed members.
 
-## xTras
-The EoM_xTras.nb directly derives the equations of motion in a metric-dependent way.
-
-## xCoba
-The EoM_xCoba.nb derives abstract equation of motion using xPert and re-expresses these expressions then by the means of xCoba in a metric-dependent way.
+## xPert
+Starting from the Lagrangian of a scalar field and interacting dark matter, the abstract expressions for the stress-energy-momentum tensor and the equations of motion are derived in this notebook.
 
 ## xPand
-The EoM_xPand.nb starts with the equations of motion in abstract notation (derived using xPert) and re-expressed them in a metric-dependent way.
+This notebook starts with the abstract notation (derived using xPert) and re-expresses everything in a metric-dependent way in a flat FLRW universe with a S-V-T decomposition.
 
 # CLASS
-The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers.
+The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files that were changed. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers. The files uploaded here are meant to replace the corresponding files in the folder 'source' of the official CLASS code base. All other files remained untouched and are to be taken from the official CLASS repository.
