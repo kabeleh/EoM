@@ -26,7 +26,7 @@ Starting from the Lagrangian of a scalar field and interacting dark matter, the 
 This notebook starts with the abstract notation (derived using xPert) and re-expresses everything in a metric-dependent way in a flat FLRW universe with a S-V-T decomposition.
 
 # CLASS
-The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files that were changed. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers.
+The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files that were changed. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers. Our fork is based on CLASS 2.9.4.
 ## \*.c-Files
 The \*.c-files uploaded here are meant to replace the corresponding files in the folder 'source' of the official CLASS code base.
 ## \*.h-Files
