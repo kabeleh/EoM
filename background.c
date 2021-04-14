@@ -1042,7 +1042,6 @@ int background_indices(
   /* - put here additional ingredients that you want to appear in the
      normal vector */
   /*    */
-  /*    */
 
   /* - end of indices in the normal vector of background values */
   pba->bg_size_normal = index_bg;
@@ -1969,13 +1968,35 @@ int background_solve(
         printf("%.3f\t,\t",pba->scf_parameters[i]);//KBL
       }
       printf("%.3f\t]\n",pba->scf_parameters[pba->scf_parameters_size-1]);
+      printf("DM Transition occurs at z = %f\n",pba->z_trans);//KBL
     }
+    /** KBL:1 */
+    printf(" ----------------- Matter Density Composition Today ------------------\n");
+    printf(" - Total Matter Density \t = %f\n",(pvecback[pba->index_bg_rho_b]+pvecback[pba->index_bg_rho_cdm])/pvecback[pba->index_bg_rho_crit]);
+    printf(" - Baryonic Matter Density \t = %f\n",pvecback[pba->index_bg_rho_b]/pvecback[pba->index_bg_rho_crit]);
+    printf(" - Dark Matter Density \t\t = %f\n",pvecback[pba->index_bg_rho_cdm]/pvecback[pba->index_bg_rho_crit]);
+    printf(" - Warm Dark Matter Density \t = %f\n",pvecback[pba->index_bg_rho_ncdm1]/pvecback[pba->index_bg_rho_crit]);
+    printf(" - Decaying Dark Matter Density\t = %f\n",pvecback[pba->index_bg_rho_dcdm]/pvecback[pba->index_bg_rho_crit]);
+    printf(" ---------------------------------------------------------------------\n");
+    /** KBL:0 */
   }
 
   /**  - total matter, radiation, dark energy today */
   pba->Omega0_m = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_m];
   pba->Omega0_r = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_r];
   pba->Omega0_de = 1. - (pba->Omega0_m + pba->Omega0_r + pba->Omega0_k);
+  /** KBL:1 Get the correct Omega_m today*/
+  pba->Omega_m_0 = (pvecback[pba->index_bg_rho_b]+pvecback[pba->index_bg_rho_cdm])/pvecback[pba->index_bg_rho_crit];
+  if (pba->has_dcdm == _TRUE_){
+    pba->Omega_m_0 += pvecback[pba->index_bg_rho_dcdm]/pvecback[pba->index_bg_rho_crit];
+    }
+  if (pba->has_ncdm == _TRUE_){
+    pba->Omega_m_0 += pvecback[pba->index_bg_rho_ncdm1]/pvecback[pba->index_bg_rho_crit];
+    }
+  if (pba->has_scf == _FALSE_){
+    pba->z_trans = 0;//Little Fix for MontePython in order to compare models
+  }
+  /** KBL:0 */
 
   free(pvecback);
   free(pvecback_integration);
@@ -2011,7 +2032,10 @@ int background_initial_conditions(
   double rho_ncdm, p_ncdm, rho_ncdm_rel_tot=0.;
   double f,Omega_rad, rho_rad;
   int counter,is_early_enough,n_ncdm;
-  //double scf_lambda;//KBL
+  /** KBL:
+   *  double scf_lambda;
+   */
+
   double rho_fld_today;
   double w_fld,dw_over_da_fld,integral_fld;
   
@@ -2543,10 +2567,19 @@ int background_derivs(
     dy[pba->index_bi_rho_fld] = -3.*y[pba->index_bi_a]*pvecback[pba->index_bg_H]*(1.+pvecback[pba->index_bg_w_fld])*y[pba->index_bi_rho_fld];
   }
 
+  //KBL:1
+  //pba->Omega_m_0 = (pvecback[pba->index_bg_rho_b]+pvecback[pba->index_bg_rho_cdm])/pvecback[pba->index_bg_rho_crit];
+  //printf("b = %f\t, cdm = %f\t, crit = %f\t, O_m_0 = %f\t, O_m = %f\n",pvecback[pba->index_bg_rho_b],pvecback[pba->index_bg_rho_cdm],pvecback[pba->index_bg_rho_crit],pba->Omega_m_0,pvecback[pba->index_bg_Omega_m]);
+
   if (pba->has_scf == _TRUE_){
+    //Store transition redshift:
+    if (pvecback[pba->index_bg_phi_scf] < pba->scf_parameters[3]) {
+      pba->z_trans = pba->a_today/pvecback[pba->index_bg_a]-1.0;
+    }
+
     /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV + a^2 drho_CDM = 0 \f$  (note H is wrt cosmic time) */
     dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf];
-    //KBL: 1
+
     if (fabs(pba->scf_parameters[0]-1) < 0.00001) {
       dy[pba->index_bi_phi_prime_scf] = - y[pba->index_bi_a]*
           (2*pvecback[pba->index_bg_H]*y[pba->index_bi_phi_prime_scf]
@@ -2572,7 +2605,8 @@ int background_derivs(
         }
       else printf("Something went wrong with the Klein-Gordon Equation for the scalar field.\n");
     }
-  }//KBL: 0
+  }
+  //KBL: 0
 
   return _SUCCESS_;
 
