@@ -33,7 +33,7 @@
  */
 
 double Q_cdm_scf(
-              struct background * pba,
+              struct background *pba,
               double phi) {
   double has_tanh   = pba->scf_parameters[0];
   double phi_null   = pba->scf_parameters[3];
@@ -42,20 +42,22 @@ double Q_cdm_scf(
   double Q_result          = 0.;
 
   if (fabs(has_tanh-1) < 0.00001) {
+    //printf("Q:tanh executed:\t");
     Q_result        = -2.0*c_twiddl/(1.0+exp(-2.0*c_twiddl*(phi-phi_null)));
   }
   else {
     if (phi < phi_null) {
+      //printf("Q:phi<phi0 executed:\t");
       Q_result      = 0.;
     }
     else if (phi >= phi_null) {
+      //printf("Q:phi>phi0 executed:\t");
       Q_result     = -c_twiddl;
     }
     else printf("Error in CDM Mass Function Q in perturbation.c\n");
   }
-
+  //printf("Q=%f,\t phi=%f,\tphi0=%f\n",Q_result,phi,phi_null);
   return  Q_result;
-
 }
 
 /**
@@ -63,7 +65,7 @@ double Q_cdm_scf(
  */
 
 double Q_prime_cdm_scf(
-              struct background * pba,
+              struct background *pba,
               double phi) {
   double has_tanh   = pba->scf_parameters[0];
   double phi_null   = pba->scf_parameters[3];
@@ -72,20 +74,22 @@ double Q_prime_cdm_scf(
   double Q_result          = 0.;
 
   if (fabs(has_tanh-1) < 0.00001) {
+    //printf("Q':tanh executed\n");
     Q_result        = 4.0*pow(c_twiddl,2)*exp(2.0*c_twiddl*phi)*(exp(2.0*c_twiddl*phi)-exp(2.0*c_twiddl*phi_null))/pow(exp(2.0*c_twiddl*phi)+exp(2.0*c_twiddl*phi_null),2);
   }
   else {
     if (phi < phi_null) {
+      //printf("Q':phi<phi0 executed\n");
       Q_result      = 0.;
     }
     else if (phi >= phi_null) {
+      //printf("Q':phi>phi0 executed\n");
       Q_result     = pow(c_twiddl,2);
     }
     else printf("Error in CDM Mass Function Q' in perturbation.c\n");
   }
-
+  
   return  Q_result;
-
 }
 
 /** KBL:0 */
@@ -5600,23 +5604,23 @@ int perturb_initial_conditions(struct precision * ppr,
         alpha_prime = 0.0;
         /* - 2. * a_prime_over_a * alpha + eta
            - 4.5 * (a2/k2) * ppw->rho_plus_p_shear; */
-
+        //KBL: all scf computations are already implemented in Newtonian Gauge, there is no need to add this term on top
         ppw->pv->y[ppw->pv->index_pt_phi_scf] += alpha*ppw->pvecback[pba->index_bg_phi_prime_scf];
         
         // HVR-->
         // The gauge-transformation rule for the new variable is:
         //    pp_scf_newt = pp_scf_sync + alpha*(phi_prime_prime - a_prime_over_a*phi_prime)
         
-        //KBL:1
         /*ppw->pv->y[ppw->pv->index_pt_phi_prime_scf] +=
           (-2.*a_prime_over_a*alpha*ppw->pvecback[pba->index_bg_phi_prime_scf]
            -a*a* dV_scf(pba,ppw->pvecback[pba->index_bg_phi_scf])*alpha
            +ppw->pvecback[pba->index_bg_phi_prime_scf]*alpha_prime);*/
-        ppw->pv->y[ppw->pv->index_pt_pp_scf] += 
-          alpha*(-3.*a_prime_over_a*ppw->pvecback[pba->index_bg_phi_prime_scf]
+           
+        ppw->pv->y[ppw->pv->index_pt_pp_scf] +=
+          //alpha*(-3.*a_prime_over_a*alpha*ppw->pvecback[pba->index_bg_phi_prime_scf]
+          alpha*(-3.*a_prime_over_a*ppw->pvecback[pba->index_bg_phi_prime_scf]//KBL
                  -a*a*dV_scf(pba,ppw->pvecback[pba->index_bg_phi_scf])
                  -a*a*Q_cdm_scf(pba,ppw->pvecback[pba->index_bg_phi_scf])*ppw->pvecback[pba->index_bg_rho_cdm]);
-        /*KBL:0*/
            
         // <--HVR
       }
@@ -6715,11 +6719,12 @@ int perturb_total_stress_energy(
     if (pba->has_cdm == _TRUE_) {
       /** KBL:1 */
       if (pba->has_scf == _TRUE_) {
+        //printf("delta rho executed\n");
         ppw->delta_rho += ppw->pvecback[pba->index_bg_rho_cdm]*(y[ppw->pv->index_pt_delta_cdm] 
                           + Q_cdm_scf(pba,ppw->pvecback[pba->index_bg_phi_scf])*y[ppw->pv->index_pt_phi_scf]);
       }
       else ppw->delta_rho += ppw->pvecback[pba->index_bg_rho_cdm]*y[ppw->pv->index_pt_delta_cdm]; // contribution to total perturbed stress-energy
-      //KBL:0
+      /** KBL:0 */
 
       if (ppt->gauge == newtonian)
         ppw->rho_plus_p_theta = ppw->rho_plus_p_theta + ppw->pvecback[pba->index_bg_rho_cdm]*y[ppw->pv->index_pt_theta_cdm]; // contribution to total perturbed stress-energy
@@ -6903,20 +6908,22 @@ int perturb_total_stress_energy(
        species with non-zero shear.
     */
     if (pba->has_scf == _TRUE_) {
+
       if (ppt->gauge == synchronous){
-        /*delta_rho_scf =  1./3.*
+        delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
         delta_p_scf = 1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
-           - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);*/
+           - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
         printf("Please use Newtonian Gauge everywhere\n");
       }
       else{
         /* equation for psi */
-        psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
+        //psi = y[ppw->pv->index_pt_phi] - 4.5 * (a2/k/k) * ppw->rho_plus_p_shear;
+        //only used in default
+        /**KBL: default:
 
-        /** KBL:1
         delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]
@@ -6924,8 +6931,7 @@ int perturb_total_stress_energy(
         delta_p_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]
-           - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*psi);
-        */
+           - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*psi); */
 
         /** Written with new "momentum" param: */   
 
@@ -6935,7 +6941,6 @@ int perturb_total_stress_energy(
         delta_p_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_pp_scf]
            - ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
-        /*KBL:0*/
       }
 
       ppw->delta_rho += delta_rho_scf;
@@ -7546,7 +7551,7 @@ int perturb_sources(
       _set_source_(ppt->index_tp_delta_b) = y[ppw->pv->index_pt_delta_b]
         + 3.*a_prime_over_a*theta_over_k2; // N-body gauge correction
     }
-
+/* KBL: What does _set_source_ do? */
     /* delta_cdm */
     if (ppt->has_source_delta_cdm == _TRUE_) {
         /**
@@ -7576,18 +7581,18 @@ int perturb_sources(
     /* delta_scf */
     if (ppt->has_source_delta_scf == _TRUE_) {
       if (ppt->gauge == synchronous){
-        /*delta_rho_scf =  1./3.*
-          (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
+        delta_rho_scf =  1./3.*
+          (1./a2_rel*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf])
-          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction*/
+          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction
         printf("You have to use Newtonian Gauge!\n");
       }
       else{
         delta_rho_scf =  1./3.*
-          (1./a2_rel*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_pp_scf]//KBL
+          (1./a2_rel*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_pp_scf]//*y[ppw->pv->index_pt_phi_prime_scf]//KBL
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf])
-           //- 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*ppw->pvecmetric[ppw->index_mt_psi])
-          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction*/
+           //- 1./a2_rel*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*ppw->pvecmetric[ppw->index_mt_psi])//KBL
+          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction
       }
       _set_source_(ppt->index_tp_delta_scf) = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
     }
@@ -8117,16 +8122,16 @@ int perturb_print_variables(double tau,
 
     if (pba->has_scf == _TRUE_){
       if (ppt->gauge == synchronous){
-        /*delta_rho_scf =  1./3.*
+        delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
-           + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);*/
+           + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
         printf("You are using synchronous gauge.\n");
       }
       else{
         delta_rho_scf =  1./3.*
-          (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_pp_scf]//y[ppw->pv->index_pt_phi_prime_scf]//KBL
-           + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);
-           //- 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*ppw->pvecmetric[ppw->index_mt_psi]);*/
+          (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_pp_scf]//*y[ppw->pv->index_pt_phi_prime_scf]
+           + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]);//KBL
+           //- 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*ppw->pvecmetric[ppw->index_mt_psi]);
       }
 
       rho_plus_p_theta_scf =  1./3.*
@@ -8832,11 +8837,16 @@ int perturb_derivs(double tau,
 
         /** KBL:1 */
         if (pba->has_scf == _TRUE_) {
+          //printf("theta executed\n");
           dy[pv->index_pt_theta_cdm] =  - (a_prime_over_a+q_cdm_scf*pvecback[pba->index_bg_phi_prime_scf])*y[pv->index_pt_theta_cdm] + metric_euler
                                         + q_cdm_scf*k2*y[pv->index_pt_phi_scf];
+
+          /**printf("No scf: dtheta = %f\nmod scf: dtheta = %f\t with Q=%f,\t theta = %f,\t phi_prime = %f,\t and k2dphi = %f\n",- a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler,- a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler
+           *                           -q_cdm_scf*(y[pv->index_pt_theta_cdm]*pvecback[pba->index_bg_phi_prime_scf]-k2*y[pv->index_pt_phi_scf]),q_cdm_scf,y[pv->index_pt_theta_cdm],pvecback[pba->index_bg_phi_prime_scf],k2*y[pv->index_pt_phi_scf]);
+           */
         }
-        else dy[pv->index_pt_theta_cdm] = - a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler; /* cdm velocity */
-        //KBL:0
+        else dy[pv->index_pt_theta_cdm] =  - a_prime_over_a*y[pv->index_pt_theta_cdm] + metric_euler; /* cdm velocity */        
+        /** KBL:0*/                              
       }
 
 
@@ -8984,22 +8994,32 @@ int perturb_derivs(double tau,
     /** - ---> scalar field (scf) */
 
     if (pba->has_scf == _TRUE_) {
-      /** KBL:1 - ----> field value */
-      
-      if (ppt->gauge == synchronous) {
-      printf("Please use Newtonian Gauge!\n");
-      }
 
-      /** - ----> field value */
+      /** Default Implementation :
 
-      //dy[pv->index_pt_phi_scf] = y[pv->index_pt_phi_prime_scf];
-      dy[pv->index_pt_phi_scf] = y[pv->index_pt_pp_scf] + metric_euler/k2*pvecback[pba->index_bg_phi_prime_scf];
+      dy[pv->index_pt_phi_scf] = y[pv->index_pt_phi_prime_scf];
 
       /** - ----> Klein Gordon equation
-       * dy[pv->index_pt_phi_prime_scf] =  - 2.*a_prime_over_a*y[pv->index_pt_phi_prime_scf]
-       *  - metric_continuity*pvecback[pba->index_bg_phi_prime_scf] //  metric_continuity = h'/2
-       *  - (k2 + a2*pvecback[pba->index_bg_ddV_scf])*y[pv->index_pt_phi_scf]; //checked
+
+      dy[pv->index_pt_phi_prime_scf] =  - 2.*a_prime_over_a*y[pv->index_pt_phi_prime_scf]
+        - metric_continuity*pvecback[pba->index_bg_phi_prime_scf] //  metric_continuity = h'/2
+        - (k2 + a2*pvecback[pba->index_bg_ddV_scf])*y[pv->index_pt_phi_scf]; //checked
+
+      */
+
+      /** KBL:1 - ----> field value */
+      if (ppt->gauge == synchronous) {
+
+      printf("Please use Newtonian Gauge!\n");
+
+      }
+
+      /** New Implementation using two first order ODEs ------------> 
+       *  Note that metric_continuity = -3.*pvecmetric[ppw->index_mt_phi_prime];
+       *  and that  metric_euler = k2*pvecmetric[ppw->index_mt_psi]
        */
+
+      dy[pv->index_pt_phi_scf] = y[pv->index_pt_pp_scf] + metric_euler/k2*pvecback[pba->index_bg_phi_prime_scf];
 
       dy[pv->index_pt_pp_scf] = 
         -2.0*a_prime_over_a*y[pv->index_pt_pp_scf]
@@ -9007,13 +9027,56 @@ int perturb_derivs(double tau,
           + a2*pvecback[pba->index_bg_ddV_scf]
           + a2*pvecback[pba->index_bg_rho_cdm]*Q_prime_cdm_scf(pba,pvecback[pba->index_bg_phi_scf])
           )*y[pv->index_pt_phi_scf]
-        -a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]*y[pv->index_pt_delta_cdm]
+        -a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]*y[pv->index_pt_delta_cdm]//KBL: Setting q_cdm_scf = 0 solves the integration issue
         -metric_continuity*pvecback[pba->index_bg_phi_prime_scf]
-        -a2*metric_euler/k2*(pvecback[pba->index_bg_dV_scf] + q_cdm_scf*pvecback[pba->index_bg_rho_cdm]);
-      //printf("%f\t%f\t%f\n",dy[pv->index_pt_pp_scf],y[pv->index_pt_pp_scf],y[pv->index_pt_phi_scf]);
-      //KBL:0
-    }
+        -a2*metric_euler/k2*(pvecback[pba->index_bg_dV_scf] + q_cdm_scf*pvecback[pba->index_bg_rho_cdm]);//KBL: Setting q_cdm_scf = 0 solves the integration issue
+      //Debugging
+      //Check for super-horizon instability:
+      /*if (fabs(a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]) > a_prime_over_a | fabs(a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]) > k2) {
+        printf("H = %f,\tk2 = %f\n",a_prime_over_a,k2);
+      }
+      /*
+      if (fabs(dy[pv->index_pt_phi_scf]) > 100. | fabs(dy[pv->index_pt_pp_scf]) > 100.) {//If Q = 0, pt_phi < 1 all the time, so this can be set lower to abort earlier
+        printf("----------------------------------------------------------------------------------\n");
+        printf("ddphi = %f,\tp = %f\n",dy[pv->index_pt_phi_scf],y[pv->index_pt_pp_scf]);
+        printf("dp = %f,\tQ = %f,\tQ_prime = %f,\tdphi = %f\tdelta = %f\n",
+          dy[pv->index_pt_pp_scf],q_cdm_scf,Q_prime_cdm_scf(pba,pvecback[pba->index_bg_phi_scf]),
+          y[pv->index_pt_phi_scf],y[pv->index_pt_delta_cdm]);
+        printf("theta = %f\trho = %f\n",y[pv->index_pt_theta_cdm],pvecback[pba->index_bg_rho_cdm]);
+        printf("k2 = %f,\tPsi = %f,\tmetric_euler = %f\n",k2,pvecmetric[ppw->index_mt_psi],metric_euler);
+        //abort();
+      }
+      */
+      //Testing end
 
+
+
+
+
+      /*dy[pv->index_pt_pp_scf] = 
+        -2.0*a_prime_over_a*y[pv->index_pt_pp_scf]
+        -(  k2
+          + a2*pvecback[pba->index_bg_ddV_scf]
+          + a2*pvecback[pba->index_bg_rho_cdm]*Q_prime_cdm_scf(pba,pvecback[pba->index_bg_phi_scf])
+          )*y[pv->index_pt_phi_scf]
+        -a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]*y[pv->index_pt_delta_cdm]//KBL: 0. should be q_cdm_scf
+        -metric_continuity*pvecback[pba->index_bg_phi_prime_scf]
+        -a2*metric_euler/k2*(pvecback[pba->index_bg_dV_scf] + q_cdm_scf*pvecback[pba->index_bg_rho_cdm]);//KBL: 0. should be q_cdm_scf
+      printf("dphi = %f,\tdp = %f,\tQ = %f,\trho_c = %f\n",dy[pv->index_pt_phi_scf],dy[pv->index_pt_pp_scf],q_cdm_scf,pvecback[pba->index_bg_rho_cdm]);
+      /** <----------------------------------------------------------
+      /** Implementation as second order ODE, with an approximation:
+
+      dy[pv->index_pt_phi_scf] = y[pv->index_pt_phi_prime_scf];   
+
+      dy[pv->index_pt_phi_prime_scf] =  - 2.*a_prime_over_a*y[pv->index_pt_phi_prime_scf]
+        +(-pvecmetric[ppw->index_mt_phi_prime] - metric_continuity)*pvecback[pba->index_bg_phi_prime_scf] //  approximate psi_prime by -phi_prime (assuming Universe is flat and scf is shearless)
+        -(k2 + a2*pvecback[pba->index_bg_ddV_scf] + a2*pvecback[pba->index_bg_rho_cdm]*Q_prime_cdm_scf(pba,pvecback[pba->index_bg_phi_scf]))*y[pv->index_pt_phi_scf]
+        -a2*q_cdm_scf*pvecback[pba->index_bg_rho_cdm]*y[pv->index_pt_delta_cdm]
+        -a2*pvecmetric[ppw->index_mt_psi]*(pvecback[pba->index_bg_dV_scf] + q_cdm_scf*pvecback[pba->index_bg_rho_cdm]);
+
+      /** KBL:0 */
+      //printf("dphi = %f,\tdp = %f\n",dy[pv->index_pt_phi_scf],dy[pv->index_pt_pp_scf]);
+    }
     /** - ---> interacting dark radiation */
     if (pba->has_idr == _TRUE_){
 
