@@ -36,3 +36,12 @@ The \*.pyx\*-files uploaded here are meant to replace the corresponding files in
 
 
 All other files remained untouched and are to be taken from the official CLASS repository.
+
+# MontePython
+The obtained model was implemented was tested against different likelihoods. The parameter-files and the obtained best-fit values as well as the covariance matrix of each run are stored in this folder. The model was tested to the background order (A) and including first-order perturbations (P). The results were compared to the LambdaCDM-model (L).
+Different sets of likelihoods are used:
+1: Planck 2018 TTTEEE
+2: Planck 2018 TTTEEE + BBN + Pantheon + CalPriorSNIa + H0LiCOW + SH0ES21 + eBOSS DR14
+3: Planck 2018 TTTEEE + BBN + Pantheon + H0LiCOW + eBOSS DR14
+K: KiDS-450 + VIKING
+
