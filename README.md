@@ -38,7 +38,7 @@ The \*.pyx\*-files uploaded here are meant to replace the corresponding files in
 All other files remained untouched and are to be taken from the official CLASS repository.
 
 # MontePython
-The obtained model was implemented was tested against different likelihoods. The parameter-files and the obtained best-fit values as well as the covariance matrix of each run are stored in this folder. The model was tested to the background order (A) and including first-order perturbations (P). The results were compared to the LambdaCDM-model (L).
+The obtained model was tested against different likelihoods. The parameter-files and the obtained best-fit values as well as the covariance matrix of each run are stored in this folder. The model was tested to the background order (A) and including first-order perturbations (P). The results were compared to the LambdaCDM-model (L).
 
 Different sets of likelihoods are used:
 
