@@ -10,7 +10,7 @@ CLASS: https://lesgourg.github.io/class_public/class.html
 MontePython: https://brinckmann.github.io/montepython_public/
 
 
-# Equations of Motion
+# mathematica: Equations of Motion
 Equations of Motion from a Lagrangian / an action
 
 This rep contains mathematica files that use the xAct packages xPert and xPand to derive the equations of motion from a specified Lagrangian in a flat Friedmann-Lemaître-Robertson-Walker (FLRW) universe with a first order perturbation in a scalar-vector-tensor (SVT) decomposition.
@@ -26,7 +26,7 @@ Starting from the Lagrangian of a scalar field and interacting dark matter, the 
 This notebook starts with the abstract notation (derived using xPert) and re-expresses everything in a metric-dependent way in a flat FLRW universe with a S-V-T decomposition.
 
 # CLASS
-The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files that were changed. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers. Our fork is based on CLASS 2.9.4. An updated version based on CLASS 3.0.1 is available as a seperate branch.
+The obtained equations are implemented in the CLASS code (https://github.com/lesgourg/class_public). Uploaded here are the full source code files that were changed. Please note that only the changes marked with 'KBL' or 'HVR' are our own work. Credits for everything else go to the CLASS maintainers. Our fork is based on CLASS 2.9.4.
 ## \*.c-Files
 The \*.c-files uploaded here are meant to replace the corresponding files in the folder 'source' of the official CLASS code base.
 ## \*.h-Files
