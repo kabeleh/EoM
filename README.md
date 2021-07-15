@@ -10,8 +10,8 @@ CLASS: https://lesgourg.github.io/class_public/class.html
 MontePython: https://brinckmann.github.io/montepython_public/
 
 
-# mathematica: Equations of Motion
-Equations of Motion from a Lagrangian / an action
+# mathematica
+Equations of Motion from a Lagrangian / an Action
 
 This rep contains mathematica files that use the xAct packages xPert and xPand to derive the equations of motion from a specified Lagrangian in a flat Friedmann-Lemaître-Robertson-Walker (FLRW) universe with a first order perturbation in a scalar-vector-tensor (SVT) decomposition.
 
