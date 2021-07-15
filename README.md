@@ -42,11 +42,8 @@ The obtained model was implemented was tested against different likelihoods. The
 
 Different sets of likelihoods are used:
 
-1: Planck 2018 TTTEEE
-
-2: Planck 2018 TTTEEE + BBN + Pantheon + CalPriorSNIa + H0LiCOW + SH0ES21 + eBOSS DR14
-
-3: Planck 2018 TTTEEE + BBN + Pantheon + H0LiCOW + eBOSS DR14
-
-K: KiDS-450 + VIKING
+* 1: Planck 2018 TTTEEE
+* 2: Planck 2018 TTTEEE + BBN + Pantheon + CalPriorSNIa + H0LiCOW + SH0ES21 + eBOSS DR14
+* 3: Planck 2018 TTTEEE + BBN + Pantheon + H0LiCOW + eBOSS DR14
+* K: KiDS-450 + VIKING
 
