@@ -1,0 +1,136 @@
+#------Experiments to test (separated with commas)-----
+
+data.experiments=['kv450_cf_likelihood_public']
+
+#------ Settings for the over-sampling. The first element will always be set to
+# 1, for it is the sampling of the cosmological parameters. The other numbers
+# describe the over sampling of the nuisance parameter space. This array must
+# have the same dimension as the number of blocks in your run (so, 1 for
+# cosmological parameters, and then 1 for each experiment with varying nuisance
+# parameters).
+#data.over_sampling=[1, 4]
+
+#------ Parameter list -------
+
+# data.parameters[class name] = [mean, min, max, 1-sigma, scale, role]
+# - if min max irrelevant, put to -1
+# - if fixed, put 1-sigma to 0
+# - if scale irrelevant, put to 1, otherwise to the appropriate factor
+# - role is either 'cosmo' or 'nuisance'
+
+# Cosmological parameters list
+# main parameters to extract:
+
+data.parameters['omega_cdm']    = [0.11919,   0.01, 0.99, 0.0027,    1, 'cosmo']
+data.parameters['ln10^{10}A_s'] = [3.0753,   1.7, 5., 0.0029,    1, 'cosmo']
+data.parameters['omega_b']      = [0.022253,  0.01875, 0.02625, 0.028,  1, 'cosmo']
+data.parameters['n_s']          = [0.96229,   0.7, 1.3, 0.0074,    1, 'cosmo']
+#data.parameters['h']         	= [0.673,     0.64,   0.82,   0.0065, 1, 'cosmo']
+data.parameters['H0']           = [ 70,      None,  None,      0.05,   1,      'cosmo']
+data.parameters['tau_reio']     = [ 0.0543,  0.004, None,      0.008,  1,      'cosmo']
+
+# Scalar Field Parameters
+# KBL
+# Note that counting starts with 1 in MontePython but 0 in CLASS
+# Note that all parameters are specified here, also the constant ones: cst-value, none, none, 0.0
+
+#tanh [1/0]
+data.parameters['scf_parameters__1']    = [ 0.0,        None,   None,   0.0,    1,      'cosmo']
+
+#b
+data.parameters['scf_parameters__2']	= [ 150.0,       30.0, 500.0,   15.0,    1,      'cosmo']
+
+#c
+data.parameters['scf_parameters__3']	= [ 0.1,        0.0,    1.0,    0.1,    1,      'cosmo']
+
+#phi0
+data.parameters['scf_parameters__4']	= [ 0.0,        None,   None,   0.0,    1,      'cosmo']
+
+#C (used for shooting anyway)
+data.parameters['scf_parameters__5']	= [ 1e-7,       None,   None,   0.0,    1,      'cosmo']
+
+#c_twiddl or gamma, change values accordingly!
+data.parameters['scf_parameters__6']	= [ 0.3,        0.0,    1.0,    0.1,    1,      'cosmo']
+
+#phi_i
+data.parameters['scf_parameters__7']	= [ 1.0,        None,   None,   0.0,    1,      'cosmo']
+
+#phi_prime_i
+data.parameters['scf_parameters__8']	= [ 0.0,        None,   None,   0.0,    1,      'cosmo']
+
+# Nuisance parameters:
+
+# amplitude for intrinsic alignments (IA):
+data.parameters['A_IA'] = [0.0, -6.0, 6.0, 1.0, 1, 'nuisance']
+
+# amplitude for baryon feedback with 'halofit':
+#data.parameters['A_bary'] = [0.75, 0.5, 1., 0.5, 1, 'nuisance']
+
+# parameters for baryon feedback with 'hmcode':
+data.parameters['c_min'] = [3., 2., 3.13, 1., 1, 'cosmo']
+#data.parameters['eta_0'] = [0.7, 0.59, 0.81, 1., 1, 'cosmo']
+
+# nuisance parameters for c-correction:
+data.parameters['dc'] = [0., -0.0006, 0.0006, 0.0002, 1, 'nuisance']
+data.parameters['Ac'] = [ 1.01, 0.62, 1.40, 0.13, 1, 'nuisance']
+
+### Delta-z parameters ###
+data.parameters['D_z1'] = [ 0., -0.117, 0.117, 0.01, 1, 'nuisance']
+data.parameters['D_z2'] = [ 0., -0.069, 0.069, 0.01, 1, 'nuisance']
+data.parameters['D_z3'] = [ 0., -0.078, 0.078, 0.01, 1, 'nuisance']
+data.parameters['D_z4'] = [ 0., -0.036, 0.036, 0.01, 1, 'nuisance']
+data.parameters['D_z5'] = [ 0., -0.033, 0.033, 0.01, 1, 'nuisance']
+
+# Derived parameters:
+
+data.parameters['z_reio']           = [1, None, None, 0,     1,   'derived']
+data.parameters['Omega_m']      = [1, None, None, 0, 1, 'derived']
+data.parameters['YHe']              = [1, None, None, 0,     1,   'derived']
+data.parameters['rs_d']             = [1, None, None, 0,     1,   'derived']
+data.parameters['100*theta_s']      = [1, None, None, 0,     1,   'derived']
+data.parameters['A_s']              = [0, None, None, 0,  1e-9,   'derived']
+data.parameters['sigma8']           = [0, None, None, 0,     1,   'derived']
+data.parameters['z_trans']          = [0, None, None, 0,     1,   'derived']
+data.parameters['Omega_m_0']        = [0, None, None, 0,     1,   'derived']
+
+# Other cosmo parameters (fixed parameters, precision parameters, etc.)
+
+data.path['cosmo']	= '/home/kl/Documents/CLASS_2.9.4_P/'
+
+# fix main cosmology to Planck:
+data.cosmo_arguments['Omega_k'] = 0.
+
+# The base model features two massless
+# and one massive neutrino with m=0.06eV.
+# The settings below ensures that these
+# three species contribute equally
+# to the radiation density at large
+# redshift, with a total of Neff=3.046
+#data.cosmo_arguments['N_eff'] = 2.0328
+data.cosmo_arguments['N_ur'] = 2.0328
+data.cosmo_arguments['N_ncdm'] = 1
+data.cosmo_arguments['m_ncdm'] = 0.06
+data.cosmo_arguments['T_ncdm'] = 0.71611
+
+# standard BBN prediction of the primordial Helium abundance $Y_p$:
+data.cosmo_arguments['sBBN file'] = data.path['cosmo']+'/bbn/sBBN.dat'
+data.cosmo_arguments['k_pivot'] = 0.05
+
+#------ CLASS input file parameters ----
+# KBL
+# data.cosmo_arguments['Y_He'] = 0.25
+# data.cosmo_arguments['Name as in CLASS input file'] = value or 'string'
+data.cosmo_arguments['tol_initial_Omega_r'] = 1e-2
+data.cosmo_arguments['Omega_Lambda'] = 0.0
+data.cosmo_arguments['Omega_fld'] = 0.0
+data.cosmo_arguments['Omega_scf'] = -0.7
+data.cosmo_arguments['scf_tuning_index'] = 4
+
+# These two are required to get sigma8 as a derived parameter
+# (class must compute the P(k) until sufficient k)
+data.cosmo_arguments['gauge'] = 'newtonian'
+data.cosmo_arguments['output'] = 'mPk'
+data.cosmo_arguments['P_k_max_h/Mpc'] = 1.
+
+# only needed for regular MCMC:
+data.write_step = 1
