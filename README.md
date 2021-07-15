@@ -47,3 +47,4 @@ Different sets of likelihoods are used:
 * 3: Planck 2018 TTTEEE + BBN + Pantheon + H0LiCOW + eBOSS DR14
 * K: KiDS-450 + VIKING
 
+MontePython was used in version 3.4.
