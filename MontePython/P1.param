@@ -133,7 +133,7 @@ data.parameters['Omega_m_0']        = [0, None, None, 0,     1,   'derived']
 
 # Other cosmo parameters (fixed parameters, precision parameters, etc.)
 
-data.path['cosmo']	= '/home/kl/Documents/CLASS_2.9.4_P_corr/'
+data.path['cosmo']	= '/home/kl/Documents/CLASS_2.9.4_P'
 data.cosmo_arguments['sBBN file'] = data.path['cosmo']+'/bbn/sBBN.dat'
 data.cosmo_arguments['k_pivot'] = 0.05
 
